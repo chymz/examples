@@ -10,26 +10,6 @@ export default () => {
         component: () => import("./views/Home.vue")
       },
       {
-        path: "/about",
-        name: "about",
-        component: () => import("./views/About.vue")
-      },
-      {
-        path: "/anime",
-        name: "anime",
-        component: () => import("./views/Anime.vue")
-      },
-      {
-        path: "/loading",
-        name: "loading",
-        component: () => import("./views/LongLoading.vue")
-      },
-      {
-        path: "/lazy",
-        name: "lazy",
-        component: () => import("./views/LazyLoad.vue")
-      },
-      {
         path: "/login",
         name: "login",
         component: () => import("./views/Login.vue")
@@ -40,8 +20,18 @@ export default () => {
         children: [
           {
             path: "",
-            name: "private.home",
-            component: () => import("./views/PrivateHome.vue")
+            name: "private.onHttpRequest",
+            component: () => import("./views/OnHttpRequest.vue")
+          },
+          {
+            path: "middleware",
+            name: "private.middleware",
+            component: () => import("./views/Middleware.vue")
+          },
+          {
+            path: "async-data",
+            name: "private.asyncData",
+            component: () => import("./views/AsyncData.vue")
           }
         ]
       }

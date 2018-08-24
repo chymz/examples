@@ -16,7 +16,7 @@ if (!process.client) {
 /**
  * Add this client to all components
  */
-Vue.prototype.$http = {
+export const $http = {
   // Simple variable to store current token
   token: null,
 
@@ -72,19 +72,42 @@ Vue.prototype.$http = {
   }
 };
 
+Vue.prototype.$http = $http;
+
 /**
  * At boot time try to get token from cookies
  */
-export default async ({ ctx }) => {
+export default async ({ ctx, store, redirect }) => {
   // On server side
   if (!process.client) {
     if (ctx.cookie) {
-      Vue.prototype.$http.token = ctx.cookie.token;
+      $http.token = ctx.cookie.token;
+      await store.commit("setToken", $http.token);
     }
-
     // On client side
   } else {
     const Cookies = require("js-cookie");
-    Vue.prototype.$http.token = Cookies.get("token") || "";
+    $http.token = Cookies.get("token") || "";
+    await store.commit("setToken", $http.token);
   }
+
+  /**
+   * Interceptors
+   */
+  httpClient.interceptors.response.use(
+    function(response) {
+      // Do something with response data
+      return response;
+    },
+    function(error) {
+      if (error.response && error.response.status == 401) {
+        $http.token = null;
+        store.commit("setToken", null);
+        store.commit("setUser", null);
+
+        redirect("/login");
+      }
+      return Promise.reject(error);
+    }
+  );
 };

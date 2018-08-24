@@ -22,7 +22,10 @@ module.exports = app => {
    */
   router.post("/api/login", async ctx => {
     ctx.set("content-type", "application/json");
-    ctx.body = { token: jwt.sign({ name: ctx.request.body.name }, "shhhhh") };
+    ctx.body = {
+      token: jwt.sign({ name: ctx.request.body.name }, "shhhhh"),
+      user: ctx.request.body.name
+    };
   });
 
   /**
@@ -54,19 +57,14 @@ module.exports = app => {
 
     try {
       if (jwt.verify(token, "shhhhh")) {
-        ctx.body = [
-          {
-            title: "My first private item"
-          },
-          {
-            title: "My second private item"
-          }
-        ];
+        ctx.body = {
+          private: "data"
+        };
         return;
       }
     } catch (err) {}
 
-    ctx.status = 403;
+    ctx.status = 401;
     ctx.body = {
       error: "Bad token"
     };
